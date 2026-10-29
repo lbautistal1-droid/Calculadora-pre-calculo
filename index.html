@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Cúbica Pro</title>
+  <style>
+    /* Fondo con degradado animado */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      perspective: 1000px;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Tarjeta central con efecto 3D */
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 35px 30px;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 0 20px rgba(255, 255, 255, 0.5);
+      width: 100%;
+      max-width: 380px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+      animation: floatIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    h2 {
+      margin: 0 0 5px 0;
+      color: #1a1a2e;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .equation-preview {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #6c5ce7;
+      margin-bottom: 25px;
+      background: rgba(108, 92, 231, 0.1);
+      padding: 8px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px dashed rgba(108, 92, 231, 0.3);
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 800;
+      color: #4a5568;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #2d3748;
+      outline: none;
+      background: #f8fafc;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input:focus {
+      border-color: #6c5ce7;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Botón animado con resplandor continuo */
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      animation: pulseGlow 2.5s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); }
+      100% { box-shadow: 0 12px 28px rgba(108, 92, 231, 0.7); }
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      background: linear-gradient(135deg, #5b4bc4, #8c7ae6);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    /* Panel de resultados con animación pop-up */
+    #res {
+      margin-top: 25px;
+      padding: 18px;
+      background: #ffffff;
+      border-left: 5px solid #6c5ce7;
+      border-radius: 14px;
+      font-size: 15px;
+      display: none;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .animate-results {
+      animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .val {
+      font-weight: 800;
+      color: #0d9488;
+      background: #ccfbf1;
+      padding: 3px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .error-msg {
+      color: #e11d48;
+      font-weight: 700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+    <h2>Ecuación Cúbica</h2>
+    <div class="equation-preview">ax³ + bx² + cx + d = 0</div>
+    
+    <div class="inputs">
+      <div class="input-group">
+        <label>Coeficiente a</label>
+        <input type="number" id="a" value="1" step="any">
+      </div>
+      <div class="input-group">
+        <label>Coeficiente b</label>
+        <input type="number" id="b" value="-6" step="any">
+      </div>
+      <div class="input-group">
+        <label>Coeficiente c</label>
+        <input type="number" id="c" value="11" step="any">
+      </div>
+      <div class="input-group">
+        <label>Coeficiente d</label>
+        <input type="number" id="d" value="-6" step="any">
+      </div>
+    </div>
+
+    <button onclick="calcular()">Calcular Raíces ✨</button>
+
+    <div id="res"></div>
+  </div>
+
+  <script>
+    // Efecto 3D de inclinación al mover el ratón
+    const card = document.getElementById('card');
+    document.addEventListener('mousemove', (e) => {
+      const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+      const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+      card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    });
+
+    // Función principal para resolver la ecuación cúbica
+    function calcular() {
+      const a = parseFloat(document.getElementById('a').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const c = parseFloat(document.getElementById('c').value);
+      const d = parseFloat(document.getElementById('d').value);
+
+      const resDiv = document.getElementById('res');
+      
+      resDiv.classList.remove('animate-results');
+      resDiv.style.display = 'block';
+      void resDiv.offsetWidth; 
+      resDiv.classList.add('animate-results');
+
+      if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
+        resDiv.innerHTML = "<div class='error-msg'>⚠️ Ingresa valores numéricos válidos.</div>";
+        return;
+      }
+
+      if (a === 0) {
+        resDiv.innerHTML = "<div class='error-msg'>⚠️ El coeficiente 'a' no puede ser cero.</div>";
+        return;
+      }
+
+      // Método de Cardano / Trigonométrico seguro
+      const b1 = b / a, c1 = c / a, d1 = d / a;
+      const p = c1 - (b1 * b1) / 3;
+      const q = (2 * Math.pow(b1, 3)) / 27 - (b1 * c1) / 3 + d1;
+      const disc = Math.pow(q / 2, 2) + Math.pow(p / 3, 3);
+
+      let x1, x2, x3;
+
+      if (disc > 0) {
+        const u = Math.cbrt(-q / 2 + Math.sqrt(disc));
+        const v = Math.cbrt(-q / 2 - Math.sqrt(disc));
+        x1 = (u + v - b1 / 3).toFixed(4);
+        const real = (-(u + v) / 2 - b1 / 3).toFixed(4);
+        const imag = Math.abs(Math.sqrt(3) * (u - v) / 2).toFixed(4);
+        x2 = `${real} + ${imag}i`;
+        x3 = `${real} - ${imag}i`;
+      } else if (Math.abs(disc) < 1e-12) {
+        const u = Math.cbrt(-q / 2);
+        x1 = (2 * u - b1 / 3).toFixed(4);
+        x2 = (-u - b1 / 3).toFixed(4);
+        x3 = x2;
+      } else {
+        const r = Math.sqrt(-Math.pow(p / 3, 3));
+        const phi = Math.acos(Math.min(Math.max(-q / (2 * r), -1), 1));
+        const factor = 2 * Math.cbrt(r);
+        x1 = (factor * Math.cos(phi / 3) - b1 / 3).toFixed(4);
+        x2 = (factor * Math.cos((phi + 2 * Math.PI) / 3) - b1 / 3).toFixed(4);
+        x3 = (factor * Math.cos((phi + 4 * Math.PI) / 3) - b1 / 3).toFixed(4);
+      }
+
+      resDiv.innerHTML = `
+        <strong style="color: #2d3748; font-size: 16px;">Resultados Obtenidos:</strong><br><br>
+        <strong>X₁ =</strong> <span class="val">${x1}</span><br><br>
+        <strong>X₂ =</strong> <span class="val">${x2}</span><br><br>
+        <strong>X₃ =</strong> <span class="val">${x3}</span>
+      `;
+    }
+  </script>
+
+</body>
+</html>
